@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import picocolors from 'picocolors';
@@ -139,6 +140,7 @@ Options:
   --app              Patch or restore Antigravity Standalone App only
   -r, --restore      Revert changes and restore original backup files
   --path <dir/file>  Specify custom path to IDE directory or app.asar
+  --browser          Install the Remote Control browser extension folder
   -h, --help         Show this help message
 
 Default Behavior:
@@ -153,7 +155,29 @@ Examples:
   npx antigravity-rtl --app         # Patch only Antigravity Standalone App
   npx antigravity-rtl --restore     # Restore all detected patched apps
   npx antigravity-rtl -r --ide      # Restore only Antigravity IDE
+  npx antigravity-rtl --browser     # Extension for Remote Control in Chrome/Arc
 `);
+    process.exit(0);
+}
+
+function installBrowserExtension() {
+    const dest = path.join(os.homedir(), '.antigravity-rtl-extension');
+    const extDir = path.join(__dirname, '..', 'extension');
+    fs.mkdirSync(dest, { recursive: true });
+    fs.copyFileSync(path.join(extDir, 'manifest.json'), path.join(dest, 'manifest.json'));
+    fs.copyFileSync(path.join(__dirname, 'remote-client.js'), path.join(dest, 'content.js'));
+    fs.copyFileSync(path.join(__dirname, 'Vazirmatn-Variable.woff2'), path.join(dest, 'Vazirmatn-Variable.woff2'));
+    console.log(green(`\nRemote Control extension ready:\n  ${dest}\n`));
+    console.log('The remote UI is a cross-origin iframe, so the desktop patch cannot reach it.');
+    console.log('In Chrome or Arc: open the extensions page, turn on Developer Mode,');
+    console.log('then Load unpacked and choose the folder above. Reload the remote tab.');
+    console.log(yellow('Browser settings are stored in the extension, separate from ~/.antigravity-rtl.json.\n'));
+    const openCmd = process.platform === 'darwin' ? `open "${dest}"` : process.platform === 'win32' ? `explorer "${dest}"` : `xdg-open "${dest}"`;
+    exec(openCmd, () => {});
+}
+
+if (args.includes('--browser')) {
+    installBrowserExtension();
     process.exit(0);
 }
 
@@ -232,7 +256,10 @@ async function main() {
         }
     }
 
-    if (ok && !isRestore) await promptForStar();
+    if (ok && !isRestore) {
+        console.log(cyan('\nRemote Control in the browser is separate. Set it up with: npx antigravity-rtl --browser\n'));
+        await promptForStar();
+    }
 }
 
 main().catch(e => {
