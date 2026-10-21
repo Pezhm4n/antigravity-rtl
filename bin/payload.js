@@ -534,7 +534,11 @@ win.webContents.on('console-message', (event, ...args) => {
                         div.shrink-0[style*="height: 40px"] input,
                         div.shrink-0[style*="height: 40px"] [role="button"],
                         #rtl-topbar-wrapper,
-                        #rtl-topbar-wrapper * {
+                        #rtl-topbar-wrapper *,
+                        [role="navigation"],
+                        [role="navigation"] *,
+                        aside,
+                        aside * {
                             -webkit-app-region: no-drag !important;
                         }
                         

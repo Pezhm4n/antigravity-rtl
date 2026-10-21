@@ -20,12 +20,15 @@
 
     function isRtl(text) {
         if (!text) return false;
-        const clean = text.replace(/[\u00ad\u200b-\u200f\u202a-\u202e\u2060-\u2064\ufeff]/g, ' ').trim();
+        const withoutCodeAndUrls = text
+            .replace(/https?:\/\/\S+/gi, ' ')
+            .replace(/\x60[^\x60]+\x60/g, ' ');
+        const clean = withoutCodeAndUrls.replace(/[\u00ad\u200b-\u200f\u202a-\u202e\u2060-\u2064\ufeff]/g, ' ').trim();
         if (!clean) return false;
         const rtlCount = (clean.match(RTL_CHAR_RE) || []).length;
         if (!rtlCount) return false;
         const latinCount = (clean.match(LATIN_CHAR_RE) || []).length;
-        return rtlCount > latinCount * 0.5;
+        return rtlCount > latinCount * 0.4;
     }
 
     function textDir(text) {
