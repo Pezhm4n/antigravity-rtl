@@ -82,7 +82,7 @@ Follow the steps for your operating system. Node.js **22.12 or newer** is requir
 | `npx antigravity-rtl --restore` | Revert changes and restore original backups for all detected apps |
 | `npx antigravity-rtl --restore --ide` | Revert changes and restore Antigravity IDE only |
 | `npx antigravity-rtl --restore --app` | Revert changes and restore Antigravity Standalone App only |
-| `npx antigravity-rtl --path "/path/to/app"` | Specify a custom installation directory or app.asar |
+| `npx antigravity-rtl --path "/path/to/app"` | Specify a custom path: the IDE directory, or the Standalone App's `app.asar` file |
 | `npx antigravity-rtl --browser` | Install the Remote Control extension folder (Chrome / Arc) |
 
 Remote Control opens this UI in the browser, inside a cross-origin iframe. The desktop patch cannot reach it. `--browser` writes an unpacked Chrome/Arc extension that injects the same RTL engine into that iframe. Load the printed folder from the extensions page (Developer Mode → Load unpacked), then reload the remote tab.
@@ -154,7 +154,7 @@ Antigravity RTL یک ابزار خط فرمان برای افزودن پشتیب
 | `npx antigravity-rtl --restore` | بازگردانی به نسخه اصلی برای تمام برنامه‌های شناسایی‌شده |
 | `npx antigravity-rtl --restore --ide` | فقط بازگردانی Antigravity IDE به نسخه اصلی |
 | `npx antigravity-rtl --restore --app` | فقط بازگردانی نسخه مستقل Antigravity به نسخه اصلی |
-| `npx antigravity-rtl --path "/path/to/app"` | مشخص کردن مسیر دلخواه نصب برنامه |
+| `npx antigravity-rtl --path "/path/to/app"` | مشخص کردن مسیر دلخواه: پوشهٔ IDE، یا فایل `app.asar` نسخهٔ مستقل |
 | `npx antigravity-rtl --browser` | نصب پوشهٔ افزونهٔ Remote Control برای کروم و Arc |
 
 Remote Control همان رابط را داخل یک iframe با دامنهٔ جدا در مرورگر باز می‌کند و پچ دسکتاپ به آن نمی‌رسد. `--browser` یک افزونهٔ unpacked می‌سازد؛ پوشهٔ چاپ‌شده را از صفحهٔ افزونه‌ها با Developer Mode بارگذاری کنید و تب ریموت را رفرش کنید.
