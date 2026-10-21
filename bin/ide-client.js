@@ -258,52 +258,7 @@
                 });
                 return;
             }
-
-            // Editable inputs
-            document.querySelectorAll('[contenteditable="true"] p, [contenteditable="true"], textarea[data-testid="ask-question-writein"]').forEach(el => {
-                const raw = el.tagName === 'TEXTAREA' ? el.value : el.textContent;
-                const text = (raw || '').replace(/[\u200B-\u200F\uFEFF]/g, '').trim();
-                if (text.length > 0) {
-                    const isRtlText = /^[^a-zA-Z]*[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/.test(text);
-                    const newDir = isRtlText ? 'rtl' : 'ltr';
-                    if (el.getAttribute('dir') !== newDir) el.setAttribute('dir', newDir);
-                } else {
-                    if (el.hasAttribute('dir')) el.removeAttribute('dir');
-                }
-            });
-
-            // Chat Output, Conversation View & Options
-            document.querySelectorAll(`
-                .prose > *, 
-                [data-testid="chat-message"] > *, 
-                .markdown-body > *, 
-                .leading-relaxed > *,
-                [data-testid="user-input-step"],
-                [data-testid="user-input-step"] > *,
-                [data-testid="conversation-view"] p,
-                [data-testid="conversation-view"] li,
-                div:has(> [role="radiogroup"]),
-                label[for^="ask-opt-"]
-            `).forEach(el => {
-                if (el.tagName === 'PRE' || el.tagName === 'CODE' || el.closest('.monaco-editor') || el.closest('.terminal')) return;
-
-                const text = (el.textContent || '').replace(/[\u200B-\u200F\uFEFF]/g, '').trim();
-                let dir = 'auto';
-
-                if (state.forceRTL) {
-                    dir = 'rtl';
-                } else if (text) {
-                    const firstChar = text.match(/[A-Za-z\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/);
-                    if (firstChar) {
-                        const isPersianOrArabic = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(firstChar[0]);
-                        dir = isPersianOrArabic ? 'rtl' : 'ltr';
-                    }
-                }
-
-                if (el.getAttribute('dir') !== dir) {
-                    el.setAttribute('dir', dir);
-                }
-            });
+            window.__antigravityRtlCore.updateDir(state.forceRTL);
         }
 
         function el(tag, styles, children, attrs) {
@@ -600,35 +555,11 @@
             }
         });
 
-        // Keyboard layout shortcuts
-        document.addEventListener('keydown', (e) => {
-            // Alt + R to toggle RTL
-            if (e.altKey && e.code === 'KeyR') {
-                e.preventDefault();
-                setRTLActive(!state.isRTL);
-            }
+        window.__antigravityRtlCore.onToggleShortcut(() => setRTLActive(!state.isRTL));
+        window.__antigravityRtlCore.watch(() => {
+            updateDir();
+            tryInsertStatusBarItem();
         });
-
-        // Throttled dynamic UI updater
-        let domUpdateTimer = null;
-
-        function scheduleDOMUpdate() {
-            if (domUpdateTimer) return;
-            domUpdateTimer = setTimeout(() => {
-                domUpdateTimer = null;
-                updateDir();
-                tryInsertStatusBarItem();
-            }, 400);
-        }
-
-        document.body.addEventListener('input', scheduleDOMUpdate, { capture: true });
-        document.body.addEventListener('focusin', scheduleDOMUpdate, { capture: true });
-
-        const observer = new MutationObserver((mutations) => {
-            const hasExternal = mutations.some(m => [...m.addedNodes].some(node => !node.id || !node.id.startsWith('antigravity-rtl')));
-            if (hasExternal) scheduleDOMUpdate();
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
 
         // Initial run
         updateUI();

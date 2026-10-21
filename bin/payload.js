@@ -47,7 +47,7 @@ win.webContents.on('console-message', (event, ...args) => {
             } catch (e) {}
 
             // Unified injection for RTL Toggle, CSS, and JS
-            win.webContents.executeJavaScript(`(() => {
+            win.webContents.executeJavaScript(__RTL_CORE__ + `(() => {
                 if (window.__ANTIGRAVITY_RTL_LOADED__) return;
                 window.__ANTIGRAVITY_RTL_LOADED__ = true;
 
@@ -538,70 +538,13 @@ win.webContents.on('console-message', (event, ...args) => {
                     updateDynamicCSS(savedFaFont, savedEnFont, savedCodeFont, savedLH, savedFS);
                 }
                 
-                // 2. Input Observer Logic
+                // 2. Input Observer Logic (shared engine: bin/rtl-core.js)
                 function updateDir() {
-                    if (!isRTL) return;
-                    
-                    // Inputs
-                    document.querySelectorAll('[contenteditable="true"] p, [contenteditable="true"], textarea[data-testid="ask-question-writein"]').forEach(el => {
-                        const raw = el.tagName === 'TEXTAREA' ? el.value : el.textContent;
-                        const text = raw.replace(/[\\u200B-\\u200F\\uFEFF]/g, '').trim();
-                        if (text.length > 0) {
-                            const isRtlText = /^[^a-zA-Z]*[\\u0591-\\u07FF\\uFB1D-\\uFDFD\\uFE70-\\uFEFC]/.test(text);
-                            const newDir = isRtlText ? 'rtl' : 'ltr';
-                            if (el.getAttribute('dir') !== newDir) el.setAttribute('dir', newDir);
-                        } else {
-                            if (el.hasAttribute('dir')) el.removeAttribute('dir');
-                        }
-                    });
-                    
-                    // Chat Output & Artifact Viewer (Respects Force RTL)
-                    document.querySelectorAll(\`
-                        .prose > *, 
-                        [data-testid="chat-message"] > *, 
-                        .markdown-body > *, 
-                        .leading-relaxed > *,
-                        [data-testid="user-input-step"],
-                        [data-testid="user-input-step"] > *,
-                        div:has(> [role="radiogroup"]),
-                        label[for^="ask-opt-"]
-                    \`).forEach(el => {
-                        // Skip code blocks
-                        if (el.tagName === 'PRE' || el.tagName === 'CODE') return;
-                        
-                        const text = el.textContent.replace(/[\\u200B-\\u200F\\uFEFF]/g, '').trim();
-                        let dir = 'auto';
-                        
-                        if (forceRTL) {
-                            dir = 'rtl';
-                        } else if (text) {
-                            const firstChar = text.match(/[A-Za-z\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\uFB50-\\uFDFF\\uFE70-\\uFEFF]/);
-                            if (firstChar) {
-                                const isPersianOrArabic = /[\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\uFB50-\\uFDFF\\uFE70-\\uFEFF]/.test(firstChar[0]);
-                                dir = isPersianOrArabic ? 'rtl' : 'ltr';
-                            }
-                        }
-                        
-                        if (el.getAttribute('dir') !== dir) {
-                            el.setAttribute('dir', dir);
-                        }
-                    });
+                    if (isRTL) window.__antigravityRtlCore.updateDir(forceRTL);
                 }
-                document.body.addEventListener('input', updateDir, { capture: true });
-                document.body.addEventListener('focusin', updateDir, { capture: true });
-                const observer = new MutationObserver(updateDir);
-                observer.observe(document.body, { childList: true, subtree: true });
-                setInterval(updateDir, 500);
-                
-                // Keyboard layout fixes & shortcuts
-                document.addEventListener('keydown', (e) => {
-                    // Alt + R to toggle RTL
-                    if (e.altKey && e.code === 'KeyR') {
-                        e.preventDefault();
-                        setRTLActive(!isRTL);
-                    }
-                });
-                
+                window.__antigravityRtlCore.watch(updateDir);
+                window.__antigravityRtlCore.onToggleShortcut(() => setRTLActive(!isRTL));
+
                 const isMac = /Mac/i.test(navigator.userAgent || navigator.platform);
                 const shortcutKbdHtml = isMac 
                     ? '<span class="flex items-center gap-1"><kbd class="rtl-kbd">⌥</kbd><kbd class="rtl-kbd">R</kbd></span>'

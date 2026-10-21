@@ -214,7 +214,8 @@ export async function patchIde(appDir, { exitOnError = true } = {}) {
         failLabel = 'Failed to copy RTL assets.';
         spinner.text = 'Copying RTL assets and injection scripts...';
         fs.copyFileSync(path.join(__dirname, 'Vazirmatn-Variable.woff2'), path.join(outDir, 'Vazirmatn-Variable.woff2'));
-        fs.copyFileSync(path.join(__dirname, 'ide-client.js'), path.join(outDir, 'antigravity-rtl-client.js'));
+        fs.writeFileSync(path.join(outDir, 'antigravity-rtl-client.js'),
+            fs.readFileSync(path.join(__dirname, 'rtl-core.js'), 'utf8') + '\n' + fs.readFileSync(path.join(__dirname, 'ide-client.js'), 'utf8'));
         fs.copyFileSync(path.join(__dirname, 'ide-main.js'), path.join(outDir, 'antigravity-rtl-main.js'));
 
         failLabel = 'Injection into Antigravity IDE failed.';

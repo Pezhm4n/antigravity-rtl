@@ -158,7 +158,9 @@ export async function patchApp(asarPath, { exitOnError = true } = {}) {
         spinner.text = 'Injecting RTL features...';
         let utilsCode = cleanUtils;
 
-        const payload = fs.readFileSync(path.join(__dirname, 'payload.js'), 'utf8');
+        const core = fs.readFileSync(path.join(__dirname, 'rtl-core.js'), 'utf8');
+        const payload = fs.readFileSync(path.join(__dirname, 'payload.js'), 'utf8')
+            .replace('__RTL_CORE__', () => JSON.stringify(core));
         if (!utilsCode.includes(ANCHOR)) {
             throw new Error('Injection anchor not found. The app version might be unsupported.');
         }
