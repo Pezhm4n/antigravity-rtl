@@ -547,9 +547,18 @@ win.webContents.on('console-message', (event, ...args) => {
                             line-height: \${lh} !important;
                         }
                         
-                        [contenteditable="true"], [contenteditable="true"] * {
-                            unicode-bidi: isolate !important;
+                        [contenteditable="true"], [contenteditable="true"] p {
+                            unicode-bidi: plaintext !important;
                             text-align: start !important;
+                        }
+
+                        /* File chips, mentions, and decorator pills in composer must remain strictly LTR */
+                        [contenteditable="true"] [contenteditable="false"],
+                        [contenteditable="true"] [data-lexical-decorator="true"] {
+                            direction: ltr !important;
+                            text-align: left !important;
+                            unicode-bidi: isolate !important;
+                            display: inline-flex !important;
                         }
                         
                         /* Smart Auto-Direction for Sidebar & Truncated Texts */

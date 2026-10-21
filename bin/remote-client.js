@@ -57,6 +57,13 @@
                 unicode-bidi: plaintext;
                 text-align: start;
             }
+            [contenteditable="true"] [contenteditable="false"],
+            [contenteditable="true"] [data-lexical-decorator="true"] {
+                direction: ltr !important;
+                text-align: left !important;
+                unicode-bidi: isolate !important;
+                display: inline-flex !important;
+            }
             pre:not([dir="rtl"]), code:not([dir="rtl"]),
             pre:not([dir="rtl"]) *, code:not([dir="rtl"]) * {
                 direction: ltr !important;
