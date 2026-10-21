@@ -90,13 +90,13 @@ export async function restoreApp(asarPath, { exitOnError = true } = {}) {
         if (exitOnError) process.exit(1);
         return false;
     }
-    if (readUtils(backupPath).includes(PATCH_START)) {
-        console.error(red('✖ The backup is itself patched, so restoring would not remove RTL. Run the patcher once to rebuild a clean backup, or reinstall Antigravity.\n'));
-        if (exitOnError) process.exit(1);
-        return false;
-    }
     const spinner = ora('Restoring original Antigravity app.asar...').start();
     try {
+        if (readUtils(backupPath).includes(PATCH_START)) {
+            spinner.fail('The backup is itself patched, so restoring would not remove RTL. Run the patcher once to rebuild a clean backup, or reinstall Antigravity.\n');
+            if (exitOnError) process.exit(1);
+            return false;
+        }
         fs.copyFileSync(backupPath, asarPath);
         asar.uncache(asarPath);
         fs.unlinkSync(backupPath);
