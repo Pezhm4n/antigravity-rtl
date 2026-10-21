@@ -223,7 +223,8 @@
                 }
 
                 /* Strict Protection & Custom Font for Monaco Code Editor, Diff Editor, and Terminal */
-                pre, code, pre *, code *,
+                pre:not([dir="rtl"]), code:not([dir="rtl"]),
+                pre:not([dir="rtl"]) *, code:not([dir="rtl"]) *,
                 .monaco-editor, .monaco-editor *,
                 .monaco-diff-editor, .monaco-diff-editor *,
                 .part.terminal, .part.terminal *,
@@ -232,7 +233,23 @@
                     direction: ltr !important;
                     text-align: left !important;
                     unicode-bidi: normal !important;
-                    ${codeFontRule}
+                    \${codeFontRule}
+                }
+
+                pre[dir="rtl"] .code-block,
+                pre[dir="rtl"] .code-block *,
+                pre[dir="rtl"] .code-line,
+                pre[dir="rtl"] .code-line *,
+                pre[dir="rtl"] .line-content,
+                pre[dir="rtl"] .line-content *,
+                pre[dir="rtl"] code,
+                pre[dir="rtl"] code *,
+                code[dir="rtl"],
+                code[dir="rtl"] * {
+                    direction: rtl !important;
+                    text-align: right !important;
+                    unicode-bidi: normal !important;
+                    \${codeFontRule}
                 }
             `;
         }
