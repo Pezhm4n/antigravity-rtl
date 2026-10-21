@@ -76,8 +76,7 @@ app.on('browser-window-created', (_event, win) => {
                 lh: '1.6',
                 fs: '16',
                 isRTL: true,
-                forceRTL: false,
-                fixAtSign: true
+                forceRTL: false
             };
             if (fs.existsSync(CONFIG_FILE)) {
                 try {

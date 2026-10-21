@@ -15,7 +15,6 @@
         const state = {
             isRTL: rtlConfig.isRTL !== false,
             forceRTL: Boolean(rtlConfig.forceRTL),
-            fixAtSign: rtlConfig.fixAtSign !== false,
             faFont: rtlConfig.faFont || '',
             enFont: rtlConfig.enFont || '',
             codeFont: rtlConfig.codeFont || '',
@@ -416,14 +415,6 @@
                 el('div', 'display:flex;align-items:center;gap:6px;', [fsInput, fsReset])
             ]));
 
-            panelBody.appendChild(el('div', 'height:1px;background:var(--vscode-widget-border,rgba(255,255,255,0.1));margin:2px 0;'));
-
-            // Shift+2 for @
-            const atLabel = el('span', 'font-size:11px;color:var(--vscode-descriptionForeground,#94a3b8);', 'Shift+2 for @', { title: 'Type @ using Shift+2 in Persian layout' });
-            const atKnob = el('span', `display:block;width:12px;height:12px;border-radius:50%;background:#ffffff;position:absolute;top:3px;left:${state.fixAtSign ? '19px' : '3px'};transition:left 0.2s;`, null, { id: 'rtl-panel-at-knob' });
-            const atBtn = el('button', `cursor:pointer;width:34px;height:18px;border-radius:9px;border:none;background:${state.fixAtSign ? 'var(--vscode-button-background, #3b82f6)' : '#64748b'};position:relative;padding:0;outline:none;transition:background 0.2s;`, [atKnob], { id: 'rtl-panel-at-btn', type: 'button' });
-            panelBody.appendChild(el('div', 'display:flex;align-items:center;justify-content:space-between;', [atLabel, atBtn]));
-
             panel.appendChild(panelBody);
 
             // 4. Footer
@@ -438,11 +429,6 @@
             masterBtn.addEventListener('click', () => { setRTLActive(!state.isRTL); });
             forceBtn.addEventListener('click', () => {
                 state.forceRTL = !state.forceRTL;
-                saveConfig();
-                updateUI();
-            });
-            atBtn.addEventListener('click', () => {
-                state.fixAtSign = !state.fixAtSign;
                 saveConfig();
                 updateUI();
             });
@@ -531,13 +517,6 @@
             if (forceBtn && forceKnob) {
                 forceBtn.style.background = state.forceRTL ? 'var(--vscode-button-background, #3b82f6)' : '#64748b';
                 forceKnob.style.left = state.forceRTL ? '19px' : '3px';
-            }
-
-            const atBtn = document.getElementById('rtl-panel-at-btn');
-            const atKnob = document.getElementById('rtl-panel-at-knob');
-            if (atBtn && atKnob) {
-                atBtn.style.background = state.fixAtSign ? 'var(--vscode-button-background, #3b82f6)' : '#64748b';
-                atKnob.style.left = state.fixAtSign ? '19px' : '3px';
             }
         }
 
@@ -629,17 +608,6 @@
                 setRTLActive(!state.isRTL);
             }
         });
-
-        // Persian Keyboard Shift + 2 fix for @
-        document.addEventListener('keydown', (e) => {
-            if (!state.fixAtSign) return;
-            if (e.code === 'Digit2' && e.shiftKey) {
-                if (e.key === '٬' || e.key === '،') {
-                    e.preventDefault();
-                    document.execCommand('insertText', false, '@');
-                }
-            }
-        }, { capture: true });
 
         // Throttled dynamic UI updater
         let domUpdateTimer = null;

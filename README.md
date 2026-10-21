@@ -32,7 +32,6 @@ Antigravity RTL adds seamless Right-to-Left (RTL) support and typography control
 - **Natural text direction:** Chat, input fields, and agent views adapt dynamically. Use **Force RTL** when you want everything right-aligned.
 - **Code & Terminal stay LTR**: Code blocks, Monaco editor, and terminal remain left-to-right with customizable code fonts.
 - **Typography your way:** Choose separate fonts for Persian/Arabic, English, and Code. Vazirmatn is embedded offline; font size and line height can be adjusted live.
-- **Persian Keyboard Fix**: Maps `Shift + 2` to type `@` instead of `٬` on Persian keyboard layouts.
 - **Quick controls:** Title-bar menu in Standalone App and UI widget in IDE, toggleable via `⌥R` on macOS / `Alt+R` on Windows and Linux.
 
 Settings are saved in `~/.antigravity-rtl.json` and restored when you reopen the app.
@@ -143,7 +142,6 @@ Antigravity RTL یک ابزار خط فرمان برای افزودن پشتیب
 - **جهت‌دهی خودکار متن:** چیدمان پیام‌های چت، ورودی‌ها و پرامپت‌ها بر اساس زبان متن راست‌چین یا چپ‌چین می‌شود.
 - **ایزولاسیون کد و ترمینال:** بلوک‌های کد، ادیتور Monaco و محیط ترمینال با پشتیبانی از انتخاب فونت کد کاملاً چپ‌چین (LTR) باقی می‌مانند.
 - **تایپوگرافی دلخواه:** تعیین فونت مجزا برای متون فارسی/عربی، انگلیسی و کد به همراه فونت توکار **وزیرمتن (Vazirmatn Variable)** بدون وابستگی به اینترنت.
-- **حل مشکل کلید `@`:** اصلاح میانبر `Shift + 2` روی کیبورد فارسی برای تایپ مستقیم علامت `@`.
 - **دسترسی سریع:** پنل تنظیمات در برنامه و کلید میانبر `⌥R` در مک یا `Alt+R` در ویندوز و لینوکس.
 
 ### گزینه‌ها و فلگ‌های خط فرمان
